@@ -5,7 +5,7 @@ import { Animated, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { grey100 } from '../../styles/colors';
 import Icon from '../Icon';
 import Text from '../Typography/Text';
-import withTheme from '../../core/withTheme';
+import { withTheme } from '../../core/theming';
 import type { Theme } from '../../types';
 
 type Props = {

@@ -1,7 +1,7 @@
 /* @flow */
 
 import * as React from 'react';
-import { View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import DataTableBody from './DataTableBody';
 import DataTableCell from './DataTableCell';
 import DataTableHead from './DataTableHead';
@@ -13,11 +13,7 @@ type Props = {
   /**
    * Content of the `DataTable`.
    */
-  children: React.ChildrenArray<
-    | React.Element<typeof DataTableHead>
-    | React.Element<typeof DataTableBody>
-    | React.Element<typeof DataTablePagination>
-  >,
+  children: React.Node,
   style?: any,
 };
 
@@ -92,8 +88,18 @@ class DataTable extends React.Component<Props> {
   static Pagination = DataTablePagination;
 
   render() {
-    return <View style={this.props.style}>{this.props.children}</View>;
+    return (
+      <View style={[this.props.style, styles.container]}>
+        {this.props.children}
+      </View>
+    );
   }
 }
+
+const styles = StyleSheet.create({
+  container: {
+    width: '100%',
+  },
+});
 
 export default DataTable;

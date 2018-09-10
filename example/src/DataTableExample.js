@@ -69,7 +69,15 @@ class DataTableExample extends React.Component<Props, State> {
         colors: { background },
       },
     } = this.props;
-    const { items } = this.state;
+    const { items, sortAscending } = this.state;
+    const sortedItems = items.sort(
+      (item1, item2) =>
+        (sortAscending
+        ? item1.name < item2.name
+        : item2.name < item1.name)
+          ? 1
+          : -1
+    );
     const rowsPerPage = 2;
     const from = this.state.page * rowsPerPage;
     const to = (this.state.page + 1) * rowsPerPage;
@@ -105,7 +113,7 @@ class DataTableExample extends React.Component<Props, State> {
             </DataTable.Head>
 
             <DataTable.Body>
-              {items.slice(from, to).map((item, index) => (
+              {sortedItems.slice(from, to).map((item, index) => (
                 <DataTable.Row
                   key={item.key}
                   onPress={() => {
@@ -148,6 +156,7 @@ const styles = StyleSheet.create({
     elevation: 2,
     alignItems: 'center',
     justifyContent: 'center',
+    width: '100%',
   },
 
   displaySelectedRow: {

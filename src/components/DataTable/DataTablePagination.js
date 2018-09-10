@@ -4,7 +4,7 @@ import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
 import IconButton from '../IconButton';
 import Text from '../Typography/Text';
-import withTheme from '../../core/withTheme';
+import { withTheme } from '../../core/theming';
 import type { Theme } from '../../types';
 
 type Props = {
