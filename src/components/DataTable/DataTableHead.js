@@ -3,13 +3,12 @@
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
 import Divider from '../Divider';
-import DataTableHeaderCell from './DataTableHeaderCell';
 
 type Props = {
   /**
    * Content of the `DataTableHead`.
    */
-  children: React.ChildrenArray<React.Element<typeof DataTableHeaderCell>>,
+  children: React.Node,
   style?: any,
 };
 

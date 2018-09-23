@@ -37,7 +37,7 @@ class DataTableCell extends React.Component<Props> {
 
     return (
       <View style={styles.container}>
-        {typeof children === 'string' ? (
+        {typeof children === 'string' || typeof children === 'number' ? (
           <Text
             style={[
               styles.cell,
