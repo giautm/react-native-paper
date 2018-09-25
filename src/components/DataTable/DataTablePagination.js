@@ -86,19 +86,20 @@ class DataTablePagination extends React.Component<Props> {
             })}
         </Text>
 
-        <IconButton
-          icon="chevron-left"
-          color={theme.colors.text}
-          disabled={from === 1}
-          onPress={() => this.props.onChangePage(page - 1)}
-        />
-
-        <IconButton
-          icon="chevron-right"
-          color={theme.colors.text}
-          disabled={to === count}
-          onPress={() => this.props.onChangePage(page + 1)}
-        />
+        <View style={styles.chevrons}>
+          <IconButton
+            icon="chevron-left"
+            color={theme.colors.text}
+            disabled={from === 1}
+            onPress={() => this.props.onChangePage(page - 1)}
+          />
+          <IconButton
+            icon="chevron-right"
+            color={theme.colors.text}
+            disabled={to === count}
+            onPress={() => this.props.onChangePage(page + 1)}
+          />
+        </View>
       </View>
     );
   }
@@ -106,7 +107,7 @@ class DataTablePagination extends React.Component<Props> {
 
 const styles = StyleSheet.create({
   container: {
-    justifyContent: 'flex-end',
+    justifyContent: 'space-between',
     flexDirection: 'row',
     alignItems: 'center',
     paddingLeft: 16,
@@ -118,12 +119,12 @@ const styles = StyleSheet.create({
   },
 
   rowsPerPage: {
-    marginRight: 30,
   },
 
   displayedRows: {
-    marginLeft: 30,
-    marginRight: 44,
+  },
+  chevrons: {
+    flexDirection: 'row',
   },
 });
 
