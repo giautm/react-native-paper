@@ -49,7 +49,7 @@ class DataTableCell extends React.Component<Props> {
             {children}
           </Text>
         ) : (
-          { children }
+          children
         )}
       </View>
     );
