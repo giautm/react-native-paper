@@ -40,7 +40,7 @@ type RenderProps = {
   value?: string,
 };
 
-type Props = {
+type Props = React.ElementProps<NativeTextInput> & {
   /**
    * Mode of the TextInput.
    * - `flat` - flat input with an underline.
@@ -184,6 +184,7 @@ class TextInput extends React.Component<Props, State> {
     disabled: false,
     error: false,
     multiline: false,
+    editable: true,
     render: props => <NativeTextInput {...props} />,
   };
 
@@ -197,10 +198,10 @@ class TextInput extends React.Component<Props, State> {
   }
 
   state = {
-    labeled: new Animated.Value(this.props.value ? 0 : 1),
+    labeled: new Animated.Value(this.props.value || this.props.error ? 0 : 1),
     error: new Animated.Value(this.props.error ? 1 : 0),
     focused: false,
-    placeholder: '',
+    placeholder: this.props.error ? this.props.placeholder : '',
     value: this.props.value,
     labelLayout: {
       measured: false,
@@ -215,7 +216,7 @@ class TextInput extends React.Component<Props, State> {
     ) {
       // The label should be minimized if the text input is focused, or has text
       // In minimized mode, the label moves up and becomes small
-      if (this.state.value || this.state.focused) {
+      if (this.state.value || this.state.focused || this.props.error) {
         this._minmizeLabel();
       } else {
         this._restoreLabel();
@@ -226,10 +227,10 @@ class TextInput extends React.Component<Props, State> {
       prevState.focused !== this.state.focused ||
       prevProps.label !== this.props.label
     ) {
-      // Show placeholder text only if the input is focused or there's no label
+      // Show placeholder text only if the input is focused, or has error, or there's no label
       // We don't show placeholder if there's a label because the label acts as placeholder
       // When focused, the label moves up, so we can show a placeholder
-      if (this.state.focused || !this.props.label) {
+      if (this.state.focused || this.props.error || !this.props.label) {
         this._showPlaceholder();
       } else {
         this._hidePlaceholder();
@@ -270,7 +271,7 @@ class TextInput extends React.Component<Props, State> {
     });
 
   _timer: TimeoutID;
-  _root: NativeTextInput;
+  _root: ?NativeTextInput;
 
   _showError = () => {
     Animated.timing(this.state.error, {
@@ -327,6 +328,10 @@ class TextInput extends React.Component<Props, State> {
   };
 
   _handleChangeText = (value: string) => {
+    if (!this.props.editable) {
+      return;
+    }
+
     this.setState({ value });
     this.props.onChangeText && this.props.onChangeText(value);
   };
@@ -335,35 +340,35 @@ class TextInput extends React.Component<Props, State> {
    * @internal
    */
   setNativeProps(...args) {
-    return this._root.setNativeProps(...args);
+    return this._root && this._root.setNativeProps(...args);
   }
 
   /**
    * Returns `true` if the input is currently focused, `false` otherwise.
    */
   isFocused() {
-    return this._root.isFocused();
+    return this._root && this._root.isFocused();
   }
 
   /**
    * Removes all text from the TextInput.
    */
   clear() {
-    return this._root.clear();
+    return this._root && this._root.clear();
   }
 
   /**
    * Focuses the input.
    */
   focus() {
-    return this._root.focus();
+    return this._root && this._root.focus();
   }
 
   /**
    * Removes focus from the input.
    */
   blur() {
-    return this._root.blur();
+    return this._root && this._root.blur();
   }
 
   render() {
@@ -381,6 +386,7 @@ class TextInput extends React.Component<Props, State> {
 
     const { colors, fonts } = theme;
     const fontFamily = fonts.regular;
+    const hasActiveOutline = this.state.focused || error;
     const { backgroundColor = colors.background } =
       StyleSheet.flatten(style) || {};
 
@@ -483,8 +489,8 @@ class TextInput extends React.Component<Props, State> {
               styles.outline,
               {
                 borderRadius: theme.roundness,
-                borderWidth: this.state.focused ? 2 : 1,
-                borderColor: this.state.focused ? activeColor : outlineColor,
+                borderWidth: hasActiveOutline ? 2 : 1,
+                borderColor: hasActiveOutline ? activeColor : outlineColor,
               },
             ]}
           />
@@ -581,7 +587,7 @@ class TextInput extends React.Component<Props, State> {
                   color: activeColor,
                   opacity: this.state.labeled.interpolate({
                     inputRange: [0, 1],
-                    outputRange: [this.state.focused ? 1 : 0, 0],
+                    outputRange: [hasActiveOutline ? 1 : 0, 0],
                   }),
                 },
               ]}
@@ -598,7 +604,7 @@ class TextInput extends React.Component<Props, State> {
                 labelStyle,
                 {
                   color: placeholderColor,
-                  opacity: this.state.focused ? this.state.labeled : 1,
+                  opacity: hasActiveOutline ? this.state.labeled : 1,
                 },
               ]}
               numberOfLines={1}
@@ -678,6 +684,7 @@ const styles = StyleSheet.create({
     color: 'transparent',
   },
   input: {
+    flexGrow: 1,
     paddingHorizontal: 12,
     fontSize: 16,
     margin: 0,
